@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<title>voicebox</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Shippori+Mincho+B1:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LINE+Seed+JP:wght@400;700&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-world="landing">
+
+<!-- ================= Landing: its own visual world ================= -->
+<div class="lp" id="landing">
+  <canvas class="lp-canvas" id="lp-canvas" aria-hidden="true"></canvas>
+
+  <nav class="lp-rail" aria-label="章">
+    <button type="button" data-goto="0" class="is-on">序</button>
+    <button type="button" data-goto="1">録る</button>
+    <button type="button" data-goto="2">覚える</button>
+    <button type="button" data-goto="3">話す</button>
+    <button type="button" data-goto="4">はじまり</button>
+  </nav>
+
+  <div class="lp-top">
+    <a class="lp-top-link" href="#studio">アプリを開く</a>
+  </div>
+
+  <main class="lp-scenes">
+    <section class="lp-scene lp-hero" aria-label="序">
+      <div class="lp-text">
+        <h1 class="lp-title">voicebox</h1>
+        <p class="lp-sub">あなたの声をまねて、日本語を読み上げる。</p>
+      </div>
+      <div class="lp-beam" aria-hidden="true"></div>
+      <p class="lp-scroll" aria-hidden="true">スクロール</p>
+    </section>
+
+    <!-- 録る: the sentence being read is the subject; the voice line runs below it -->
+    <section class="lp-scene lp-rec" aria-labelledby="lp-h1">
+      <div class="lp-text">
+        <p class="lp-no">01</p>
+        <h2 class="lp-h" id="lp-h1">声を、録る。</h2>
+        <p class="lp-body">例文を読み上げて録音するか、音声ファイルを追加します。<br>合計 30 秒〜5 分。</p>
+      </div>
+      <blockquote class="lp-quote" lang="ja">今日はよく晴れていて、<br>散歩にちょうどいい天気です。</blockquote>
+    </section>
+
+    <!-- 覚える: the container takes the centre-left; the words move to the other side -->
+    <section class="lp-scene lp-learn" aria-labelledby="lp-h2">
+      <div class="lp-mark-still" aria-hidden="true"></div>
+      <div class="lp-text">
+        <p class="lp-no">02</p>
+        <h2 class="lp-h" id="lp-h2">声を、覚える。</h2>
+        <p class="lp-body">この Web アプリは、録った声から<br>その人の声の特徴を学習します。<br>ページを閉じても、学習は続きます。</p>
+      </div>
+    </section>
+
+    <!-- 話す: words top-left, a reply on the right, the copied line leaves to the right -->
+    <section class="lp-scene lp-speak" aria-labelledby="lp-h3">
+      <div class="lp-text">
+        <p class="lp-no">03</p>
+        <h2 class="lp-h" id="lp-h3">同じ声で、話す。</h2>
+        <p class="lp-body">日本語の文章を送ると、<br>その人の声で返ってきます。</p>
+      </div>
+      <div class="lp-chat" role="img" aria-label="文章を送ると、音声で返ってくる様子">
+        <p class="lp-bub-me" lang="ja">明日の会議は、十時からです。</p>
+        <div class="lp-bub-vb">
+          <span class="lp-play"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M4.5 2.6v10.8a.6.6 0 0 0 .9.5l8.6-5.4a.6.6 0 0 0 0-1L5.4 2.1a.6.6 0 0 0-.9.5z"/></svg></span>
+          <span class="lp-bars" aria-hidden="true"></span>
+          <span class="lp-dur">0:03</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- はじまり: less noise, two clear ways in -->
+    <section class="lp-scene lp-final" aria-labelledby="lp-h4">
+      <div class="lp-text">
+        <h2 class="lp-h" id="lp-h4">はじめよう。</h2>
+        <div class="lp-ctas">
+          <a class="lp-cta" id="lp-cta" href="#record">声を登録する</a>
+          <a class="lp-cta lp-cta-2" id="lp-cta-2" href="#synthesize">登録済みの声を使う</a>
+        </div>
+      </div>
+      <p class="lp-foot">voicebox · 情報ネットワーク グループ課題</p>
+    </section>
+  </main>
+</div>
+
+<!-- ================= App: one workbench, record on the left, clone on the right ================= -->
+<div class="app" id="app" hidden>
+  <header class="topbar">
+    <a class="tb-brand" href="#home" aria-label="voicebox トップへ">
+      <svg class="mk tb-mark" viewBox="0 0 36 36" aria-hidden="true"><g class="mk-frame"><path d="M8.5 6H6.5A2.5 2.5 0 0 0 4 8.5v19A2.5 2.5 0 0 0 6.5 30h2"/><path d="M27.5 6h2A2.5 2.5 0 0 1 32 8.5v19a2.5 2.5 0 0 1-2.5 2.5h-2"/></g><g class="mk-bars"><rect x="8.8" y="14.5" width="2.4" height="7" rx="1.2"/><rect x="12.8" y="11.0" width="2.4" height="14" rx="1.2"/><rect x="16.8" y="8.0" width="2.4" height="20" rx="1.2"/><rect x="20.8" y="13.0" width="2.4" height="10" rx="1.2"/><rect x="24.8" y="10.5" width="2.4" height="15" rx="1.2"/></g></svg>
+      <span>voicebox</span>
+    </a>
+    <span class="tb-space"></span>
+    <span class="mock-pill" id="mock-pill" hidden title="js/api.js の USE_MOCK で切り替えます">モック動作中</span>
+    <button type="button" class="tb-split" id="split-btn" aria-pressed="true">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M12 4.5v15"/></svg>
+      <span>並べて表示</span>
+    </button>
+    <button type="button" class="icon-btn" id="theme-btn" aria-label="テーマを切り替える">
+      <span class="ic-light"></span><span class="ic-dark"></span>
+    </button>
+  </header>
+
+  <div class="bench" id="bench" data-state="split">
+    <section class="pane pane-rec" id="pane-rec" aria-label="声の登録">
+      <div class="pane-body" id="rec-body">
+        <div class="pane-bar">
+          <span class="pb-title">声の登録</span>
+          <span class="pb-note">30 秒〜5 分の声で学習します</span>
+          <button type="button" class="pb-expand" data-go="record">広げる<span aria-hidden="true">→</span></button>
+        </div>
+        <div class="pane-main" id="rec-view"></div>
+      </div>
+      <button type="button" class="edge" data-go="record" aria-label="声の登録を開く" tabindex="-1">
+        <span class="edge-arrow" aria-hidden="true">›</span>
+        <span class="edge-label">声の登録</span>
+      </button>
+    </section>
+
+    <div class="divider" aria-hidden="true"></div>
+
+    <section class="pane pane-syn" id="pane-syn" aria-label="音声生成">
+      <div class="pane-body" id="syn-body">
+        <div class="pane-bar">
+          <span class="pb-title">音声生成</span>
+          <span class="pb-note">文章をその声で読み上げます</span>
+          <button type="button" class="pb-expand" data-go="synthesize"><span aria-hidden="true">←</span>広げる</button>
+        </div>
+        <div class="pane-main pane-syn-main">
+          <aside class="list-pane" id="list-pane" aria-label="話者"></aside>
+          <section class="content-pane" id="view" tabindex="-1"></section>
+        </div>
+      </div>
+      <button type="button" class="edge" data-go="synthesize" aria-label="音声生成を開く" tabindex="-1">
+        <span class="edge-arrow" aria-hidden="true">‹</span>
+        <span class="edge-label">音声生成</span>
+      </button>
+    </section>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script src="js/ui.js"></script>
+<script src="js/zip.js"></script>
+<script src="js/api.js"></script>
+<script src="js/mock.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/landing.js"></script>
+<script src="js/views/speakers.js"></script>
+<script src="js/views/record.js"></script>
+<script src="js/views/synthesize.js"></script>
+<script src="js/demo.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
